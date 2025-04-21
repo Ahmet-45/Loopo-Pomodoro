@@ -1,0 +1,78 @@
+/* JavaFX CSS - Leave this comment until you have at least create one rule which uses -fx-Property */
+
+.root {
+	-fx-background-color: #1e1e1e;
+}
+
+.label {
+	-fx-text-fill: white;
+	-fx-font-size: 14px;
+}
+
+.text-field, .password-field {
+	-fx-background-color: #2e2e2e;
+	-fx-text-fill: white;
+	-fx-border-color: #3a3a3a;
+	-fx-border-radius: 5;
+	-fx-padding: 5;
+}
+
+.button {
+	-fx-background-color: #3b82f6;
+	-fx-text-fill: white;
+	-fx-font-weight: bold;
+	-fx-background-radius: 10;
+	-fx-padding: 8 16;
+	-fx-cursor: hand; 
+}
+
+.button:hover {
+	-fx-background-color: #2563eb;
+}
+
+.button:pressed {
+	-fx-background-color: #1d4ed8
+}
+
+.time-label {
+	-fx-font-size: 200px;
+	-fx-text-fill: white;
+}
+
+.toggle-button {
+	-fx-font-size: 50px;
+    -fx-padding: 15 30;
+    -fx-background-radius: 10;
+    -fx-background-color: #3b82f6;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+}
+
+.toggle-button:hover {
+    -fx-background-color: #2563eb;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
