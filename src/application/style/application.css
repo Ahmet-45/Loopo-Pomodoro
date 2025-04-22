@@ -1,12 +1,13 @@
 /* JavaFX CSS - Leave this comment until you have at least create one rule which uses -fx-Property */
 
-.root {
+.root {  
 	-fx-background-color: #1e1e1e;
 }
 
 .label {
-	-fx-text-fill: white;
-	-fx-font-size: 14px;
+	-fx-text-fill: lightgray;
+	-fx-font-size: 36px;
+	-fx-font-weight: bold;
 }
 
 .text-field, .password-field {
@@ -35,14 +36,30 @@
 }
 
 .time-label {
-	-fx-font-size: 200px;
+	-fx-font-size: 100px;
 	-fx-text-fill: white;
+	-fx-font-weight: bold;
+	-fx-alignment: center;
+	-fx-padding: 60px;
+	
+	
+	-fx-border-color: white;
+	-fx-border-width: 6px;
+	-fx-border-radius: 200px;
+	-fx-background-radius: 200px;
+	-fx-background-color: transparent;
+	
+	-fx-min-width: 450px;
+	-fx-min-height: 300px;
+    -fx-max-width: 300px;
+    -fx-max-height: 300px;
+	
 }
 
 .toggle-button {
 	-fx-font-size: 50px;
     -fx-padding: 15 30;
-    -fx-background-radius: 10;
+    -fx-background-radius: 12;
     -fx-background-color: #3b82f6;
     -fx-text-fill: white;
     -fx-font-weight: bold;
@@ -51,8 +68,28 @@
 
 .toggle-button:hover {
     -fx-background-color: #2563eb;
+    -fx-cursor: hand;
 }
 
+.dialog-pane {
+    -fx-background-color: #1e1e1e; 
+    -fx-border-color: #00bfff;
+    -fx-border-width: 2px;
+    -fx-font-family: "Segoe UI";
+    -fx-font-size: 14px;
+    -fx-text-fill: white;
+}
+
+.dialog-pane .content {
+    -fx-text-fill: white;
+}
+
+.dialog-pane .button {
+    -fx-background-color: #0078D7;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 5;
+}
 
 
 

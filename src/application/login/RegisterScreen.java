@@ -38,12 +38,37 @@ public class RegisterScreen {
 		registerButton.setOnAction(_->{
 			String username = usernameField.getText();
 			String password = passwordField.getText();
-			if(UserData.registerUser(username, password)) {
-				message.setText("Registration successful! You are directed to the login screen...");
-			}else {
-				message.setText("This username is already in use");
+			
+		try {
+			if(username.isEmpty() || password.isEmpty()) {
+				throw new IllegalArgumentException("Please fill in all the blanks.");
 			}
-		});
+			
+			boolean success = UserData.registerUser(username, password);
+			
+				if(success) {
+				    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+				    alert.setTitle("Successful");
+				    alert.setHeaderText(null);
+				    alert.setContentText("Registration successful! You are directed to the login screen.");
+				    alert.getDialogPane().getStylesheets().add(getClass().getResource("/application/style/application.css").toExternalForm());
+				    alert.showAndWait();
+
+				    new LoginScreen(stage).show(); 
+				}else {
+				throw new Exception("This username is already registered.");
+			}
+			
+			
+		}catch (IllegalArgumentException iae) {
+			
+			showAlert(Alert.AlertType.WARNING, "Missing Information", iae.getMessage());
+		
+		}catch(Exception e) {
+			showAlert(Alert.AlertType.ERROR, "Error", e.getMessage());
+		}
+			
+	});
 		
 		backButton.setOnAction(_->{
 			new LoginScreen(stage).show();
@@ -57,4 +82,14 @@ public class RegisterScreen {
 		stage.setTitle("Register Screen");
 		
 	}
+	
+	private void showAlert(Alert.AlertType type, String title, String content) {
+        Alert alert = new Alert(type);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(content);
+        alert.getDialogPane().getStylesheets().add(getClass().getResource("/application/style/application.css").toExternalForm());
+        alert.showAndWait();
 }
+}
+

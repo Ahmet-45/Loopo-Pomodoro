@@ -33,15 +33,36 @@ public class LoginScreen {
 		Label message = new Label();
 		
 		loginButton.setOnAction(_->{
-			if(UserData.checkCredentials(usernameField.getText(), passwordField.getText())) {
-				message.setText("Login successful.");
-				PomodoroScreen pomodoro = new PomodoroScreen(stage);
-				pomodoro.show();
-				
-			}else {
-				message.setText("Wrong username or password!");
-			}
-		});
+			String username = usernameField.getText();
+		    String password = passwordField.getText();
+		    
+		    try {
+		        if (username.isEmpty() || password.isEmpty()) {
+		            throw new IllegalArgumentException("Please enter username and password.");
+		        }
+
+		        boolean loginSuccess = UserData.checkCredentials(username, password);
+		        if (loginSuccess) {
+		        	 Alert alert = new Alert(Alert.AlertType.INFORMATION);
+	                    alert.setTitle("Login Successful");
+	                    alert.setHeaderText(null);
+	                    alert.setContentText("Welcome, " + username + "!");
+	                    alert.getDialogPane().getStylesheets().add(getClass().getResource("/application/style/application.css").toExternalForm());
+	                    alert.showAndWait();
+		            PomodoroScreen screen = new PomodoroScreen(stage);
+		            screen.show();
+		        } else {
+		            throw new Exception("Wrong username or password!");
+		        }
+
+		    } catch (IllegalArgumentException iae) {
+		    	 showAlert(Alert.AlertType.WARNING, "Missing Info", iae.getMessage());
+		    } catch (Exception e) {
+		    	showAlert(Alert.AlertType.ERROR, "Login Failed", e.getMessage());
+		    }
+
+		}); 
+			
 		
 		registerButton.setOnAction(_->{
 			RegisterScreen register = new RegisterScreen(stage);
@@ -56,4 +77,14 @@ public class LoginScreen {
 		stage.setTitle("Login Screen");
 		
 	}
+	
+	 private void showAlert(Alert.AlertType type, String title, String content) {
+	        Alert alert = new Alert(type);
+	        alert.setTitle(title);
+	        alert.setHeaderText(null);
+	        alert.setContentText(content);
+	        alert.getDialogPane().getStylesheets().add(getClass().getResource("/application/style/application.css").toExternalForm());
+	        alert.showAndWait();
+	    }
 }
+

@@ -13,9 +13,16 @@ import javafx.util.Duration;
 
 public class PomodoroScreen {
 	private Stage stage;
-	private int remainingSeconds = 25*60;
-	private boolean isRunning = false;
 	private Timeline timeline;
+	private int remainingSeconds = 25;
+	private boolean isRunning = false;
+	private boolean isWorkTime = true;
+	private boolean readyToStart = true;
+	
+	
+	private Label timeLabel;
+	private Label statusLabel;
+	private Button toggleButton;
 	
 	
 	public PomodoroScreen(Stage stage) {
@@ -29,26 +36,29 @@ public class PomodoroScreen {
 		root.setPadding(new Insets(20));
 		root.setAlignment(Pos.CENTER);
 		
-		Label timeLabel = new Label(formatTime(remainingSeconds));
+		statusLabel = new Label("Working Time");
+		
+		timeLabel = new Label(formatTime(remainingSeconds));
 		timeLabel.getStyleClass().add("time-label");
 		
 		
-		Button toggleButton = new Button("Start");
+		toggleButton = new Button("Start");
 		toggleButton.getStyleClass().add("toggle-button");
 		
 		toggleButton.setOnAction(_->{
 			if(isRunning) {
-				timeline.stop();
+				if(timeline != null) timeline.stop();
 				toggleButton.setText("Start");
-			}else {
-				startTimer(timeLabel);
+				isRunning = false;
+			}else if (readyToStart){
+				startTimer();
 				toggleButton.setText("Stop");
+				isRunning = true;
+				readyToStart = false;
 			}
-			
-			isRunning = !isRunning;
 		});
 		
-		root.getChildren().addAll(timeLabel, toggleButton);
+		root.getChildren().addAll(statusLabel, timeLabel, toggleButton);
 		
 		
 		Scene scene = new Scene(root);
@@ -57,17 +67,55 @@ public class PomodoroScreen {
 		stage.setTitle("Pomodoro Timer");
 		stage.setFullScreen(true);
 		
+		startPomodoroCycle();
+		
 	}
 	
-	private void startTimer(Label timeLabel) {
+	private void startPomodoroCycle() {
+		if(timeline != null) {
+			timeline.stop();
+		}
+		
+		
+		if(isWorkTime) {
+			remainingSeconds = 25;
+			statusLabel.setText("Working Time");
+			statusLabel.setStyle("-fx-text-fill: lightgreen");
+			
+		}else {
+			remainingSeconds = 10;
+			statusLabel.setText("Break Time");
+			statusLabel.setStyle("-fx-text-fill: orange");
+		}
+		
+		updateTimer();
+		readyToStart = true;
+		toggleButton.setText("Start");
+		isRunning= false;
+		
+	}
+		
+	private void startTimer() {
 		timeline = new Timeline(new KeyFrame(Duration.seconds(1),_->{
-			if(remainingSeconds > 0) {
-				remainingSeconds--;
-				timeLabel.setText(formatTime(remainingSeconds));
+			remainingSeconds--;
+			updateTimer();
+			
+			
+			if(remainingSeconds <= 0) {
+				timeline.stop();
+				isWorkTime = !isWorkTime;
+				startPomodoroCycle();
 			}
 		}));
 		timeline.setCycleCount(Timeline.INDEFINITE);
 		timeline.play();
+	}
+	
+	
+	private void updateTimer() {
+		int minutes = remainingSeconds / 60;
+		int seconds = remainingSeconds % 60;
+		timeLabel.setText(String.format("%02d:%02d", minutes, seconds));
 	}
 	
 	private String formatTime(int totalSeconds) {
@@ -75,7 +123,4 @@ public class PomodoroScreen {
 		int seconds = totalSeconds % 60;
 		return String.format("%02d:%02d", minutes, seconds);
 	}
-
-
-	
 }

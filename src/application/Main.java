@@ -13,6 +13,9 @@ public class Main extends Application {
 		login.show();
 		primaryStage.show();
 		
+		application.data.DatabaseHelper.initializeDatabase();
+
+		
 	}
 	
 	public static void main(String[] args) {
