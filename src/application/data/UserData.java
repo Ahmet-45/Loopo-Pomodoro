@@ -1,6 +1,7 @@
 package application.data;
 
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -25,6 +26,25 @@ public class UserData {
 			e.printStackTrace();
 			return false;
 		}
+	}
+	
+	public static int getUserId(String username) {
+		int id = -1;
+		String sql = "SELECT id FROM Users WHERE username = ?";
+		
+		try(Connection conn = DriverManager.getConnection("jdbc:sqlite:loopo.db");
+				PreparedStatement pstmt = conn.prepareStatement(sql)){
+			pstmt.setString(1, username);
+			ResultSet rs = pstmt.executeQuery();
+			
+			if(rs.next()) {
+				id = rs.getInt("id");
+			}
+		}catch ( SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return id;
 	}
 	public static boolean registerUser(String username, String password) throws SQLException {
 		String query = "INSERT INTO users(username, password) VALUES(?, ?)";

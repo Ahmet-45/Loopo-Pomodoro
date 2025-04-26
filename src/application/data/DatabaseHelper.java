@@ -6,7 +6,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 public class DatabaseHelper {
-	private static final String DB_URL = "jdbc:sqlite:userdata.db";
+	private static final String DB_URL = "jdbc:sqlite:loopo.db";
 	
 	
 	public static Connection connect() throws SQLException{

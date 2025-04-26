@@ -43,13 +43,18 @@ public class LoginScreen {
 
 		        boolean loginSuccess = UserData.checkCredentials(username, password);
 		        if (loginSuccess) {
+		        	
+		        	int userId = UserData.getUserId(username);
+		        	if(userId == -1) {
+		        		throw new Exception("User not found. Please register or check information.");
+		        	}
 		        	 Alert alert = new Alert(Alert.AlertType.INFORMATION);
 	                    alert.setTitle("Login Successful");
 	                    alert.setHeaderText(null);
 	                    alert.setContentText("Welcome, " + username + "!");
 	                    alert.getDialogPane().getStylesheets().add(getClass().getResource("/application/style/application.css").toExternalForm());
 	                    alert.showAndWait();
-		            PomodoroScreen screen = new PomodoroScreen(stage);
+		            PomodoroScreen screen = new PomodoroScreen(stage, userId);
 		            screen.show();
 		        } else {
 		            throw new Exception("Wrong username or password!");

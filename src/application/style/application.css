@@ -8,6 +8,7 @@
 	-fx-text-fill: lightgray;
 	-fx-font-size: 36px;
 	-fx-font-weight: bold;
+	-fx-font-family: "Segoe UI", sans-serif;
 }
 
 .text-field, .password-field {
@@ -90,7 +91,6 @@
     -fx-font-weight: bold;
     -fx-background-radius: 5;
 }
-
 
 
 
