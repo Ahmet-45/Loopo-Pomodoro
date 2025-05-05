@@ -66,6 +66,14 @@ public class PomodoroScreen {
 	public void setSlideMenu(VBox slideMenu) {
 		this.slideMenu = slideMenu;
 	}
+	public boolean isReadyToStart() {
+		return readyToStart;
+	}
+
+
+	public void setReadyToStart(boolean readyToStart) {
+		this.readyToStart = readyToStart;
+	}
 	
 	/*
      * Constructs a PomodoroScreen for the given stage and user ID.
@@ -91,15 +99,16 @@ public class PomodoroScreen {
 		 // Handle toggle button clicks to start/stop timer
 		toggleButton.setOnAction(_->{
 			if(isRunning) {
-				if(timeline != null) timeline.stop();
+				timeline.stop();
 				toggleButton.setText("Start");
 				isRunning = false;
-			}else if (readyToStart){
+			}else{
+				if(sessionStartTime == null) {
+					sessionStartTime = LocalDateTime.now();
+				}
 				startTimer();
-				sessionStartTime = LocalDateTime.now();
 				toggleButton.setText("Stop");
 				isRunning = true;
-				readyToStart = false;
 			}
 		});
 		
@@ -268,7 +277,7 @@ public class PomodoroScreen {
 		}
 		
 		updateTimer();
-		readyToStart = true;
+		setReadyToStart(true);
 		toggleButton.setText("Start");
 		isRunning= false;
 		
