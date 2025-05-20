@@ -1,6 +1,5 @@
 package application;
 	
-import application.login.LoginScreen;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
@@ -9,9 +8,9 @@ import javafx.stage.Stage;
 public class Main extends Application {
 	@Override
 	public void start(Stage primaryStage) {
-		LoginScreen login = new LoginScreen(primaryStage);
-		login.show();
-		primaryStage.show();
+		Stage splashStage = new Stage();
+		SplashScreen splash = new SplashScreen();
+		splash.ShowSplash(splashStage);
 		
 		application.data.DatabaseHelper.initializeDatabase();
 
