@@ -134,6 +134,7 @@ public class PomodoroScreen {
 		content = new VBox(20,statusLabel, timeLabel, toggleButton);
 		content.setAlignment(Pos.CENTER);
 		
+		
 		// Top bar with menu button
 		menuButton = new Button("☰");
 		menuButton.setStyle("-fx-font-size: 18px; -fx-background-color: transparent; -fx-text-fill: white;");
@@ -267,10 +268,12 @@ public class PomodoroScreen {
 		settingsPane.setMaxWidth(500);
 		settingsPane.setMaxHeight(600);
 		settingsPane.setAlignment(Pos.CENTER);
-		 Label selectedLabel = new Label("Bir seçenek seçiniz:");
+		
+		Label selectedLabel = new Label("Bir seçenek seçiniz:");
 		Label header = new Label("Settings");
 		Button close = new Button("CLose");
 		Button save = new Button("Save");
+		
 		save.setOnAction(_->{
 			if(secilen.equals("dark-theme")) {
 				slideMenu.setStyle("-fx-background-color: #2c2c2c; -fx-padding: 20;");
@@ -289,56 +292,50 @@ public class PomodoroScreen {
 			root.getChildren().remove(settingsPane);
 		});
 		close.setOnAction(_-> root.getChildren().remove(settingsPane));
-		Slider timeSlider = new Slider(5,60,SettedRemainingTime);
 		
-		timeSlider.setBlockIncrement(10);
-		timeSlider.setShowTickLabels(true);
-		timeSlider.setShowTickMarks(true);
-		timeSlider.setMaxWidth(300);
-		timeSlider.setPrefWidth(300);
-		timeSlider.valueProperty().addListener((observable,oldValue,newValue) -> {
-		setSettedRemainingTime((int)timeSlider.getValue()*60);
+		Slider workSlider = new Slider(5,60,SettedRemainingTime / 60.0);
+		Slider breakSlider = new Slider(1,30,SettedBreakingTime / 60.0);
+		
+		workSlider.setBlockIncrement(10);
+		workSlider.setShowTickLabels(true);
+		workSlider.setShowTickMarks(true);
+		workSlider.setMaxWidth(300);
+		workSlider.setPrefWidth(300);
+		workSlider.valueProperty().addListener((obs,oldV,newV) -> {
+		SettedRemainingTime = newV.intValue() * 60;
 		updateTimer();
 		});
-		Slider timeSlider1 = new Slider(1,30,SettedBreakingTime);
 		
-		
-		timeSlider1.setBlockIncrement(10);
-		timeSlider1.setShowTickLabels(true);
-		timeSlider1.setShowTickMarks(true);
-		timeSlider1.setMaxWidth(300);
-		timeSlider1.setPrefWidth(300);
-		timeSlider1.valueProperty().addListener((observable1,oldValue1,newValue1) -> {
-		setSettedBreakingTime((int)timeSlider1.getValue()*60);
+		breakSlider.setBlockIncrement(10);
+		breakSlider.setShowTickLabels(true);
+		breakSlider.setShowTickMarks(true);
+		breakSlider.setMaxWidth(300);
+		breakSlider.setPrefWidth(300);
+		breakSlider.valueProperty().addListener((obs1,oldV1,newV1) -> {
+		SettedBreakingTime = newV1.intValue()*60;
 		updateBreakTimer();
 		});
 
 
 		ComboBox<String> comboBox = new ComboBox<>();
 		comboBox.getItems().addAll("dark-theme","light-theme");
-		comboBox.setPromptText("dark-theme(varsayılan)");
-		if(iscombo) {
 		comboBox.setValue("dark-theme");
-		iscombo = false;
-		}else {
-			comboBox.setValue(secilen);	
-		}
-		
+		secilen = "dark-theme";
 		comboBox.setOnAction(_ -> {
-		secilen = comboBox.getValue();
-		selectedLabel.setText("Seçili olan:"+secilen);
+			secilen = comboBox.getValue();
 		});
-		comboBox.setValue(secilen);
-		settingsPane.getChildren().addAll(header, 
+		
+		settingsPane.getChildren().addAll(
+				header,
 				new Label("Working Time"), 
-				timeSlider,
+				workSlider,
 				new Label("Break Time"),
-				timeSlider1,
+				breakSlider,
 				new Label("Background"),
 				comboBox,
 				save,
 				close
-				);
+			);
 		
 		
 
@@ -374,6 +371,126 @@ public class PomodoroScreen {
 	    root.getStyleClass().add(secilen);
 	}
 	
+
+
+	/*
+     * Initializes a new Pomodoro cycle by resetting timer and UI state.
+     */
+	private void startPomodoroCycle() {
+		if(timeline != null) {
+			timeline.stop();
+		}
+		
+		
+		if(isWorkTime) {
+			SettedRemainingTime = 25*60;
+			statusLabel.setText("Working Time");
+			statusLabel.setStyle("-fx-text-fill: lightgreen");
+			updateTimer();
+			
+		}else {
+			SettedBreakingTime = 5*60;
+			statusLabel.setText("Break Time");
+			statusLabel.setStyle("-fx-text-fill: orange");
+			isBreakingTime = true;
+			updateBreakTimer();
+		}
+		
+
+		setReadyToStart(true);
+		toggleButton.setText("Start");
+		isRunning= false;
+		
+	}
+		
+	/*
+     * Starts the count down and records work sessions on completion.
+     */
+	private void startTimer() {
+		timeline = new Timeline(new KeyFrame(Duration.seconds(1),_->{
+			SettedRemainingTime--;
+			updateTimer();
+			
+			
+			if(SettedRemainingTime <= 0) {
+				timeline.stop();
+				// Record focus session if ending a work period
+				if(sessionStartTime != null && isWorkTime) {
+					LocalDateTime sessionEndTime = LocalDateTime.now();
+					FocusSession session = new FocusSession(
+							userId,
+							sessionStartTime.toString(),
+							sessionEndTime.toString(),
+							25,
+							false
+						);
+						FocusSessionDAO dao = new FocusSessionDAO();
+						dao.insertSession(session);
+				}
+				
+				isWorkTime = !isWorkTime;
+				startPomodoroCycle();
+			}
+		}));
+		timeline.setCycleCount(Timeline.INDEFINITE);
+		timeline.play();
+	}
+	private void startBreakTimer() {
+		timeline = new Timeline(new KeyFrame(Duration.seconds(1),_->{
+			SettedBreakingTime--;
+			updateBreakTimer();
+			
+			
+			if(SettedBreakingTime <= 0) {
+				timeline.stop();
+				// Record focus session if ending a work period
+				if(sessionStartTime != null && isWorkTime) {
+					LocalDateTime sessionEndTime = LocalDateTime.now();
+					FocusSession session = new FocusSession(
+							userId,
+							sessionStartTime.toString(),
+							sessionEndTime.toString(),
+							25,
+							false
+						);
+						FocusSessionDAO dao = new FocusSessionDAO();
+						dao.insertSession(session);
+				}
+				
+				isWorkTime = !isWorkTime;
+				isBreakingTime = false;
+				startPomodoroCycle();
+			}
+		}));
+		timeline.setCycleCount(Timeline.INDEFINITE);
+		timeline.play();
+	}
+
+	
+	/*
+     * Updates the time label text based on remaining seconds.
+     */
+	private void updateTimer() {
+		int minutes = SettedRemainingTime / 60;
+		int seconds = SettedRemainingTime % 60;
+		timeLabel.setText(String.format("%02d:%02d", minutes, seconds));
+	}
+	private void updateBreakTimer() {
+		int minutes = SettedBreakingTime / 60;
+		int seconds = SettedBreakingTime % 60;
+		timeLabel.setText(String.format("%02d:%02d", minutes, seconds));
+	}
+	
+	/*
+     * Formats seconds into MM:SS string.
+     * @param totalSeconds total remaining seconds
+     * @return formatted time string
+     */
+	private String formatTime(int totalSeconds) {
+		int minutes = totalSeconds / 60;
+		int seconds = totalSeconds % 60;
+		return String.format("%02d:%02d", minutes, seconds);
+	}
 	public int getSettedBreakingTime() {
 		return SettedBreakingTime;
 	}
@@ -509,126 +626,5 @@ public class PomodoroScreen {
 
 	public void setToggleButton(Button toggleButton) {
 		this.toggleButton = toggleButton;
-	}
-	
-
-
-	/*
-     * Initializes a new Pomodoro cycle by resetting timer and UI state.
-     */
-	private void startPomodoroCycle() {
-		if(timeline != null) {
-			timeline.stop();
-		}
-		
-		
-		if(isWorkTime) {
-			SettedRemainingTime = 25;
-			statusLabel.setText("Working Time");
-			statusLabel.setStyle("-fx-text-fill: lightgreen");
-			updateTimer();
-			
-		}else {
-			SettedBreakingTime = 10;
-			statusLabel.setText("Break Time");
-			statusLabel.setStyle("-fx-text-fill: orange");
-			isBreakingTime = true;
-			updateBreakTimer();
-		}
-		
-
-		setReadyToStart(true);
-		toggleButton.setText("Start");
-		isRunning= false;
-		
-	}
-		
-	/*
-     * Starts the count down and records work sessions on completion.
-     */
-	private void startTimer() {
-		timeline = new Timeline(new KeyFrame(Duration.seconds(1),_->{
-			SettedRemainingTime--;
-			updateTimer();
-			
-			
-			if(SettedRemainingTime <= 0) {
-				timeline.stop();
-				// Record focus session if ending a work period
-				if(sessionStartTime != null && isWorkTime) {
-					LocalDateTime sessionEndTime = LocalDateTime.now();
-					FocusSession session = new FocusSession(
-							userId,
-							sessionStartTime.toString(),
-							sessionEndTime.toString(),
-							25,
-							false
-						);
-						FocusSessionDAO dao = new FocusSessionDAO();
-						dao.insertSession(session);
-				}
-				
-				isWorkTime = !isWorkTime;
-				startPomodoroCycle();
-			}
-		}));
-		timeline.setCycleCount(Timeline.INDEFINITE);
-		timeline.play();
-	}
-	private void startBreakTimer() {
-		timeline = new Timeline(new KeyFrame(Duration.seconds(1),_->{
-			SettedBreakingTime--;
-			updateBreakTimer();
-			
-			
-			if(SettedBreakingTime <= 0) {
-				timeline.stop();
-				// Record focus session if ending a work period
-				if(sessionStartTime != null && isWorkTime) {
-					LocalDateTime sessionEndTime = LocalDateTime.now();
-					FocusSession session = new FocusSession(
-							userId,
-							sessionStartTime.toString(),
-							sessionEndTime.toString(),
-							25,
-							false
-						);
-						FocusSessionDAO dao = new FocusSessionDAO();
-						dao.insertSession(session);
-				}
-				
-				isWorkTime = !isWorkTime;
-				isBreakingTime = false;
-				startPomodoroCycle();
-			}
-		}));
-		timeline.setCycleCount(Timeline.INDEFINITE);
-		timeline.play();
-	}
-
-	
-	/*
-     * Updates the time label text based on remaining seconds.
-     */
-	private void updateTimer() {
-		int minutes = SettedRemainingTime / 60;
-		int seconds = SettedRemainingTime % 60;
-		timeLabel.setText(String.format("%02d:%02d", minutes, seconds));
-	}
-	private void updateBreakTimer() {
-		int minutes = SettedBreakingTime / 60;
-		int seconds = SettedBreakingTime % 60;
-		timeLabel1.setText(String.format("%02d:%02d", minutes, seconds));
-	}
-	
-	/*
-     * Formats seconds into MM:SS string.
-     * @param totalSeconds total remaining seconds
-     * @return formatted time string
-     */
-	private String formatTime(int totalSeconds) {
-		int minutes = totalSeconds / 60;
-		int seconds = totalSeconds % 60;
-		return String.format("%02d:%02d", minutes, seconds);
 	}
 }
