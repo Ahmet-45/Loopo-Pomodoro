@@ -357,13 +357,13 @@ public class PomodoroScreen {
 		
 		
 		if(isWorkTime) {
-			SettedRemainingTime = 10;
+			SettedRemainingTime = 25*60;
 			statusLabel.setText("Working Time");
 			statusLabel.setStyle("-fx-text-fill: lightgreen");
 			updateTimer();
 			
 		}else {
-			SettedBreakingTime = 5;
+			SettedBreakingTime = 5*60;
 			statusLabel.setText("Break Time");
 			statusLabel.setStyle("-fx-text-fill: orange");
 			isBreakingTime = true;

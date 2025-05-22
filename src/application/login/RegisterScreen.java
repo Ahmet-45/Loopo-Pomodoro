@@ -4,6 +4,8 @@ import application.data.UserData;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
@@ -31,9 +33,18 @@ public class RegisterScreen {
      * and handles user interactions for registering and navigating back.
      */
 	public void show() {
+		stage.getIcons().add(
+				new Image(getClass().getResourceAsStream("/images/logo.png"))
+			);
 		 // Create a vertical layout pane with spacing and padding
 		VBox root = new VBox(10);
 		root.setPadding(new Insets(20));
+		
+		Image logo = new Image(getClass().getResourceAsStream("/images/logo.png"));
+        ImageView logoView = new ImageView(logo);
+        logoView.setFitWidth(50);         
+        logoView.setPreserveRatio(true);  
+        root.getChildren().add(logoView);
 		
 		// Input field for new username
 		TextField usernameField = new TextField();
@@ -100,7 +111,7 @@ public class RegisterScreen {
 		
 		root.getChildren().addAll(usernameField, passwordField, registerButton, backButton, message);
 		
-		Scene scene = new Scene(root,400,250);
+		Scene scene = new Scene(root,400,300);
 		scene.getStylesheets().add(getClass().getResource("/application/style/application.css").toExternalForm());
 		stage.setScene(scene);
 		stage.setTitle("Register Screen");

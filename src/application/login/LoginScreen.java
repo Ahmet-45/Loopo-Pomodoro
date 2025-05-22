@@ -5,6 +5,8 @@ import application.timer.PomodoroScreen;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
@@ -32,9 +34,22 @@ public class LoginScreen {
      */
 	
 	public void show() {
+		
+		stage.getIcons().add(
+				new Image(getClass().getResourceAsStream("/images/logo.png"))
+			);
 		 // Create a vertical layout pane with spacing and padding
 		VBox root = new VBox(10);
 		root.setPadding(new Insets(20));
+		
+		Image logo = new Image(getClass().getResourceAsStream("/images/logo.png"));
+		
+		ImageView logoView = new ImageView(logo);
+		
+		logoView.setFitWidth(50);
+		logoView.setPreserveRatio(true);
+		
+		root.getChildren().add(logoView);
 		
 		// Username input field with prompt text
 		TextField usernameField = new TextField();
@@ -105,12 +120,13 @@ public class LoginScreen {
 		root.getChildren().addAll(usernameField, passwordField, loginButton, registerButton, message);
 		
 		// Create and style the scene
-		Scene scene = new Scene(root,400,250);
+		Scene scene = new Scene(root,400,300);
 		scene.getStylesheets().add(getClass().getResource("/application/style/application.css").toExternalForm());
 		stage.setScene(scene);
 		stage.setTitle("Login Screen");
 		
 	}
+	
 	/*
      * Displays an alert of the specified type with a title and message content.
      * Applies the application style sheet for consistent styling.
