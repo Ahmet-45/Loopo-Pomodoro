@@ -5,7 +5,6 @@ import javafx.animation.Timeline;
 import javafx.animation.TranslateTransition;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -336,32 +335,7 @@ public class PomodoroScreen {
 				save,
 				close
 			);
-		
-		
-
-		
-	
-		/*if(isBreakingTime == false) {
-		settingsPane.getChildren().addAll(header, 
-			new Label("Working Time"), 
-			timeSlider,
-			new Label("Background"),
-			comboBox,
-			save,
-			close
-			);
-	}else {
-		settingsPane.getChildren().addAll(header, 
-				new Label("Break Time"), 
-				timeSlider1,
-				new Label("Background"),
-				comboBox,
-				save,
-				close
-				);
-	}
-	*/
-		
+			
 		root.getChildren().add(settingsPane);
 		StackPane.setAlignment(settingsPane, Pos.CENTER);
 		
@@ -383,13 +357,13 @@ public class PomodoroScreen {
 		
 		
 		if(isWorkTime) {
-			SettedRemainingTime = 25*60;
+			SettedRemainingTime = 10;
 			statusLabel.setText("Working Time");
 			statusLabel.setStyle("-fx-text-fill: lightgreen");
 			updateTimer();
 			
 		}else {
-			SettedBreakingTime = 5*60;
+			SettedBreakingTime = 5;
 			statusLabel.setText("Break Time");
 			statusLabel.setStyle("-fx-text-fill: orange");
 			isBreakingTime = true;
@@ -627,4 +601,45 @@ public class PomodoroScreen {
 	public void setToggleButton(Button toggleButton) {
 		this.toggleButton = toggleButton;
 	}
+
+
+	public boolean isIscombo() {
+		return iscombo;
+	}
+
+
+	public void setIscombo(boolean iscombo) {
+		this.iscombo = iscombo;
+	}
+
+
+	public String getSecilen() {
+		return secilen;
+	}
+
+
+	public void setSecilen(String secilen) {
+		this.secilen = secilen;
+	}
+
+
+	public Button getMenuButton() {
+		return menuButton;
+	}
+
+
+	public void setMenuButton(Button menuButton) {
+		this.menuButton = menuButton;
+	}
+
+
+	public Label getTimeLabel1() {
+		return timeLabel1;
+	}
+
+
+	public void setTimeLabel1(Label timeLabel1) {
+		this.timeLabel1 = timeLabel1;
+	}
+	
 }

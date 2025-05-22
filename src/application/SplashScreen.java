@@ -24,7 +24,7 @@ public class SplashScreen {
 		fade.play();
 		
 		PauseTransition pause = new PauseTransition(Duration.seconds(5));
-		pause.setOnFinished(e -> {
+		pause.setOnFinished(_-> {
 			Stage.close();
 			Stage loginStage = new Stage();
 			LoginScreen login = new LoginScreen(loginStage);
