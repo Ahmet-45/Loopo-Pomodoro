@@ -75,4 +75,4 @@ Bu proje **MIT Lisansı** ile lisanslanmıştır. Detaylar için [LICENSE](LICEN
 
 ## 📬 İletişim
 
-Sorularınız için: [canngumus@gmail.com](mailto:canngumus@gmail.com)
+Sorularınız için: [canngumus@gmail.com](mailto:cannngumus@gmail.com)
